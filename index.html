@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Babylon.js Model Import</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <canvas></canvas>
+    <script src="https://cdn.babylonjs.com/babylon.js"></script>
+    <script src="https://preview.babylonjs.com/loaders/babylonjs.loaders.min.js"></script>
+    <script>
+        const canvas = document.querySelector("canvas");
+        const engine = new BABYLON.Engine(canvas, true);
+
+        const createScene = async function () {
+            const scene = new BABYLON.Scene(engine);
+
+
+            BABYLON.SceneLoader.ImportMesh("", "car.obj", "", scene, function (meshes) {
+               
+                meshes[0].scaling = new BABYLON.Vector3(0.1, 0.1, 0.1);
+            });
+
+
+            const light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(1, 1, 0));
+
+            var camera = new BABYLON.ArcRotateCamera("camera1", -4, 1, -10, new BABYLON.Vector3(0, 0, 0), scene);
+            camera.setPosition(new BABYLON.Vector3(5000, 2000, 2000));
+            camera.attachControl(canvas, true);
+
+            camera.keysUp.push(87); //w
+            camera.keysDown.push(83); //s
+            camera.keysLeft.push(65); //a
+            camera.keysRight.push(68); //d
+
+            return scene;
+        };
+
+        const scenePromise = createScene();
+
+        scenePromise.then(scene => {
+            engine.runRenderLoop(() => {
+                scene.render();
+            });
+        });
+
+        window.addEventListener("resize", () => {
+            engine.resize();
+        });
+    </script>
+</body>
+
+</html>
